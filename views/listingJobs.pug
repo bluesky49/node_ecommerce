@@ -1,0 +1,19 @@
+extends layout
+
+include mixins/_listing
+
+block titleArea
+  if (currentPath.startsWith('/listing/available-jobs/share-location'))
+    .container-fluid(style="padding:0")
+      #map.map-listing
+  else
+    .container-fluid(style="padding: 0 0 0 0; background-color: lightgray")
+      .container.title-area.text-center
+        h3= title
+
+block content
+  .container.inner
+    if (currentPath.startsWith('/listing/available-jobs') || currentPath.startsWith('/listing/available-jobs/share-location'))
+      +availableJobs()
+    if (currentPath.startsWith('/listing/in-progress'))
+      +jobsInProgress()

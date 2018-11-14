@@ -1,0 +1,10 @@
+mixin googleMaps()
+  //-script(src="/dist/map.js")
+  script(src=`https://maps.googleapis.com/maps/api/js?key=${(process.env.NODE_ENV == "development" ? process.env.MAP_KEY_DEV : process.env.MAP_KEY)}&libraries=places,geometry&&callback=initMap`)
+
+  //- script(async defer src=`https://maps.googleapis.com/maps/api/js?key=${(process.env.NODE_ENV == "development" ? process.env.MAP_KEY_DEV : process.env.MAP_KEY)}&libraries=places,geometry&&callback=initMap`)
+mixin autoComplete()
+  script(async defer src=`https://maps.googleapis.com/maps/api/js?key=${(process.env.NODE_ENV == "development" ? process.env.MAP_KEY_DEV : process.env.MAP_KEY)}&libraries=places&&callback=addressAutoComplete`)
+
+mixin mapWithMarker(lat, lng)
+  script(src=`https://maps.googleapis.com/maps/api/js?key=${(process.env.NODE_ENV == "development" ? process.env.MAP_KEY_DEV : process.env.MAP_KEY)}&libraries=geometry&&callback=mapWithMarker(${lat}, ${lng})`)

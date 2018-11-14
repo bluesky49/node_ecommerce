@@ -1,0 +1,246 @@
+extends layout
+
+include mixins/_maps
+
+block titleArea
+  .container-fluid(style="padding: 0 0 0 0; background-color: lightgray")
+    .container.inner.text-center.title-area
+      h2 Edit Your Account
+
+block content
+  .container.inner
+    //-.row.col
+      pre= h.dump(user)
+
+    .row
+      .col-md-2.col-lg-3(style="padding-bottom: 2em")
+        .list-group(id="list-tab" role="tablist")
+          a(class="list-group-item list-group-item-action active" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile") Profile
+          a(class="list-group-item list-group-item-action" id="list-security-list" data-toggle="list" href="#list-security" role="tab" aria-controls="security") Security
+          if (user.accountType === "shovelee")
+            a(class="list-group-item list-group-item-action" id="listing-history-list" data-toggle="list" href="#listing-history" role="tab" aria-controls="jobs") Completed Jobs
+            a(class="list-group-item list-group-item-action" id="listing-in-progress-list" data-toggle="list" href="#listing-in-progress" role="tab" aria-controls="jobs") Jobs in progress
+          if (user.accountType === "shoveler")
+            a(class="list-group-item list-group-item-action" id="list-job-history-list" data-toggle="list" href="#list-job-history" role="tab" aria-controls="job-history") Job History
+              //- span(class="badge badge-secondary badge-pill")=listings.length
+      .col.col-md-10.col-lg-9
+        .tab-content(id="nav-tabContent")
+          div(class="tab-pane fade show active" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list")
+            form(action=`/account/${user.accountType}` method="POST")
+              .form-row
+                .col.form-group
+                  label(for="name") Name
+                  input(type="text" class="form-control" name="name" value=user.name)
+                .col.form-group
+                  label(for="email") Email
+                  input(type="email" class="form-control" name="email" value=user.email)
+              .form-row
+                .col.form-group
+                  label(for="phone") Phone
+                  input(type="tel" class="form-control input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="phone" value=user.phone)
+                if (user.accountType === "shoveler")
+                  .col.form-group
+                    label(for="paypal-email") PayPal Email
+                    input(type="email" class="form-control" name="paypalEmail" value=user.paymentEmail)
+              if (user.accountType === "shoveler")
+                - const userEquipment = user.equipment || [];
+                - const availableEquipment = ['snow brush/scraper', 'shovel', 'snow blower', 'snow plow', 'bobcat'];
+                .form-row
+                  .col-md-12.form-group
+                    label(for="equipment")
+                      strong Equipment
+                    br
+                    each item in availableEquipment
+                      input(type="checkbox" value=`${item.toLowerCase()}` name="equipment" checked=(userEquipment.includes(item.toLowerCase())))
+                      label(for=`${item}`)
+                        |&#160;#{h.capitalize(item)}
+                      br
+              if (user.accountType === "shovelee")
+                .form-row
+                  .col.form-group
+                    input(type="text" id="address" class="form-control" name="address" placeholder="Address" value=user.location.address required)
+                    input(type="text" id="lng" class="form-control" name="lng" placeholder="Longitude" value=user.location.coordinates[0] required hidden)
+                    input(type="text" id="lat" class="form-control" name="lat" placeholder="Latitude" value=user.location.coordinates[1] required hidden)
+              button.btn.btn-block.btn-primary(type="submit") Update Details
+          div(class="tab-pane fade" id="list-security" role="tabpanel" aria-labelledby="list-security-list")
+            form(action=`/account/updatePassword/${user.accountType}` method="POST")
+              .form-row
+                .col.form-group
+                  label(for="current password") Current Password
+                  input(type="password" class="form-control" placeholder="Current Password" name="currentPassword" required)
+              .form-row
+                .col-md-6.form-group
+                  label(for="password") New Password
+                  input(type="password" class="form-control" placeholder="Password" name="password" required)
+                .col-md-6.form-group
+                  label(for="password-confirm") Confirm New Password
+                  input(type="password" class="form-control" placeholder="Confirm Password" name="password-confirm" required)
+                button.btn.btn-block.btn-primary(type="submit") Reset Password
+          if (user.accountType === "shovelee")
+            div(class="tab-pane fade" id="listing-history" role="tabpanel" aria-labelledby="listing-history-list")
+              p Click on the title to view more details about each job posted
+              each listing in listings
+                if (listing.status === 'done')
+                  .accordion
+                    .card
+                      .card-header(id=`${listing.title}`)
+                        h5.mb-0
+                          button(class="btn btn-link" type="button" data-toggle="collapse" data-target=`#collapse-${listing._id}` aria-expanded="true" aria-controls=`collapse-${listing._id}`)=listing.title
+
+                      .collapse(id=`collapse-${listing._id}` aria-labelledby=`${listing.title}`)
+                        .card-body
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-map-marker-alt
+                                |&#160;Address
+                              p= listing.location.address
+                            .col-md-4
+                              h5 
+                                i.fas.fa-home
+                                |&#160;Property Type
+                              p= h.capitalize(listing.propertyType)
+                            .col-md-4
+                              h5 
+                                i.fas.fa-window-restore
+                                |&#160;Shovel Job
+                              p= h.capitalize(listing.shovelJob)
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-vector-square
+                                |&#160;Job Size
+                              p= h.capitalize(listing.size)
+                            .col-md-4
+                              h5 
+                                i.far.fa-snowflake
+                                |&#160;Snowfall
+                              p= `${listing.snowfall}" inches`
+                            .col-md-4
+                              h5 
+                                i.fas.fa-stopwatch
+                                |&#160;Deadline
+                              p= listing.deadLine
+                            
+            div(class="tab-pane fade" id="listing-in-progress" role="tabpanel" aria-labelledby="listing-in-progress-list")
+              each listing in listings
+                if (listing.status === 'in progress')
+                  .accordion
+                    .card
+                      .card-header(id=`${listing.title}`)
+                        h5.mb-0
+                          button(class="btn btn-link" type="button" data-toggle="collapse" data-target=`#collapse-${listing._id}` aria-expanded="true" aria-controls=`collapse-${listing._id}`)=listing.title
+
+                      .collapse(id=`collapse-${listing._id}` aria-labelledby=`${listing.title}`)
+                        .card-body
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-map-marker-alt
+                                |&#160;Address
+                              p= listing.location.address
+                            .col-md-4
+                              h5 
+                                i.fas.fa-home
+                                |&#160;Property Type
+                              p= h.capitalize(listing.propertyType)
+                            .col-md-4
+                              h5 
+                                i.fas.fa-window-restore
+                                |&#160;Shovel Job
+                              p= h.capitalize(listing.shovelJob)
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-vector-square
+                                |&#160;Job Size
+                              p= h.capitalize(listing.size)
+                            .col-md-4
+                              h5 
+                                i.far.fa-snowflake
+                                |&#160;Snowfall
+                              p= `${listing.snowfall}" inches`
+                            .col-md-4
+                              h5 
+                                i.fas.fa-stopwatch
+                                |&#160;Deadline
+                              p= listing.deadLine
+            
+          if (user.accountType === "shoveler")
+            div(class="tab-pane fade" id="list-job-history" role="tabpanel" aria-labelledby="list-job-history-list")
+              each listing in listings
+                if (listing.status === 'done')
+                  .accordion
+                    .card
+                      .card-header(id=`${listing.title}`)
+                        h5.mb-0
+                          button(class="btn btn-link" type="button" data-toggle="collapse" data-target=`#collapse-${listing._id}` aria-expanded="true" aria-controls=`collapse-${listing._id}`)=listing.title
+
+                      .collapse(id=`collapse-${listing._id}` aria-labelledby=`${listing.title}`)
+                        .card-body
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-map-marker-alt
+                                |&#160;Address
+                              p= listing.location.formattedAddress
+                            .col-md-4
+                              h5 
+                                i.fas.fa-home
+                                |&#160;Property Type
+                              p= h.capitalize(listing.propertyType)
+                            .col-md-4
+                              h5 
+                                i.fas.fa-window-restore
+                                |&#160;Shovel Job
+                              p= h.capitalize(listing.shovelJob)
+                          .row
+                            .col-md-4
+                              h5 
+                                i.fas.fa-vector-square
+                                |&#160;Job Size
+                              p= h.capitalize(listing.size)
+                            .col-md-4
+                              h5 
+                                i.far.fa-snowflake
+                                |&#160;Snowfall
+                              p= `${listing.snowfall}" inches`
+                            .col-md-4
+                              h5 
+                                i.fas.fa-stopwatch
+                                |&#160;Deadline
+                              p= listing.deadLine
+                          if (listing.shovelee_accuracy_review != null)
+                            //- Shovelee's Accuracy Review
+                            hr
+                            .row
+                              .col.text-center
+                                h5 
+                                  i.fas.fa-star
+                                  |&#160;Shovelee's Accuracy Review
+                                p=listing.shovelee_accuracy_review
+                          if (shoveler_timeliness_review != null && shoveler_correspondence_review != null && shoveler_snow_removal_review != null)
+                            hr
+                            .row
+                              .col.text-center
+                                h4 Shoveler Review
+
+                            .row
+                              .col-md-4.text-center
+                                h5
+                                  i.fas.fa-star
+                                  |&#160;Timeliness
+                                p=shoveler_timeliness_review
+                              .col-md-4.text-center
+                                h5
+                                  i.fas.fa-star
+                                  |&#160;Correspondence
+                                p=shoveler_correspondence_review
+                              .col-md-4.text-center
+                                h5
+                                  i.fas.fa-star
+                                  |&#160;Snow Removal
+                                p=shoveler_snow_removal_review
+
+  if user.accountType === "shovelee"
+    +autoComplete()

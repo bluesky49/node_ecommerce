@@ -1,0 +1,101 @@
+extends layout
+
+include mixins/_maps
+
+block titleArea
+  .container-fluid(style="padding:0")
+    #map.map-listing
+
+block content
+  .container.inner
+    .row
+      .col
+        if (listing.status === 'done')
+          .alert.alert-success(role="alert") Job has been completed!
+        h2=listing.title
+    
+    //- Weather
+    .row
+      .col
+        img(src=`http://openweathermap.org/img/w/${weatherData.icon}.png`, alt=`${weatherData.description}`)
+        h5=`${weatherData.title} – ${h.capitalize(weatherData.description)}`
+        p
+          |#{weatherData.temp}° Fahrenheit&#160;&#160;&#160;&#160;
+          if (weatherData.snow)
+            |Snow: #{weatherData.snow}
+
+    .row
+      //- Address (Masked)
+      .col-md-4
+        h5 
+          i.fas.fa-map-marker-alt
+          |&#160;Address
+        p= address
+
+      //- Property Type
+      .col-md-4
+        h5 
+          i.fas.fa-home
+          |&#160;Property Type
+        p= h.capitalize(listing.propertyType)
+
+      //- Shovel Job Type
+      .col-md-4
+        h5 
+          i.fas.fa-window-restore
+          |&#160;Shovel Job
+        p= h.capitalize(listing.shovelJob)
+
+    .row
+      //- Job Size
+      .col-md-4
+        h5 
+          i.fas.fa-vector-square
+          |&#160;Job Size
+        p= h.capitalize(listing.size)
+      
+      //- Snowfall
+      .col-md-4
+        h5 
+          i.far.fa-snowflake
+          |&#160;Snowfall
+        p= `${listing.snowfall}" inches`
+
+      //- Deadline time
+      .col-md-4
+        h5 
+          i.fas.fa-stopwatch
+          |&#160;Deadline
+        p= listing.deadLine
+    //- .row
+    //-   .col-md-4
+    //-     h5 
+    //-       i.fas.fa-dollar-sign
+    //-       |&#160;Price: $#{listing.price}
+    //- br
+    //- if (user.accountType === 'shoveler')
+    //-   .row
+    //-     .col
+    //-       form(action=`/listing/bid/${listing._id}` method="POST")
+    //-         button.btn.btn-success Submit a Bid
+    //- br
+    //- if (bids.length >= 1)
+    //-   .row
+    //-     .col
+    //-       h5 Latest Bids
+    //-       ul.list-group
+    //-         each bid in bids
+    //-           li.list-group-item
+    //-             |#{bid.shovelerName}
+    //-             br
+    //-             strong
+    //-               |Equipment:&#160;
+    //-             |#{bid.equipment}
+    //-             if (user.accountType === 'shovelee')
+    //-               form(action=`/listing/accept-bid/${listing._id}`  method="POST")
+    //-                 input(type="text" name="bidId" value=bid._id hidden required)
+    //-                 button.btn.btn-primary.btn-sm Accept
+
+  +googleMaps()
+  script.
+    addMarker(#{listing.location.coordinates[0]}, #{listing.location.coordinates[1]})

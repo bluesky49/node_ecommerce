@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col
+        form(method="POST")
+          .form-row
+            .col.form-group
+              label(for="password") Password
+              input(type="password" class="form-control" placeholder="Password" name="password" required)
+            .col.form-group
+              label(for="password-confirm") Confirm Password
+              input(type="password" class="form-control" placeholder="Confirm Password" name="password-confirm" required)
+            button.btn.btn-block.btn-primary(type="submit") Reset Password

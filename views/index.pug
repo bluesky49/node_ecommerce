@@ -1,0 +1,46 @@
+extends layout
+
+include mixins/_maps
+
+block titleArea
+  .container-fluid(style="padding:0")
+    #map.map-home
+  
+block content
+  //- Latest Jobs posted
+  .container.inner
+    .row
+      .col
+        h3
+          i.fas.fa-tags
+          |&#160;Latest Jobs
+        br
+        .list-group
+          each listing in listings
+            script.
+              setTimeout(function() {
+                addMarker(#{listing.location.coordinates[0]}, #{listing.location.coordinates[1]})
+              }, 400);
+            a(href=`/listing/${listing._id}` class="list-group-item list-group-item-action")=listing.title
+              button.btn.btn-primary.btn-sm.float-right View Job
+  
+  //- Local Weather based on user geolocation
+  .container-fluid.alternate
+    .container.inner
+      .row
+        .col.text-center
+          h3
+            i.far.fa-snowflake
+            |&#160;Local Weather
+          br
+          center
+            a(href="https://www.accuweather.com/en/us/new-york-ny/10007/lawn-garden-current-weather/349727" class="aw-widget-legal")
+            div(id="awtd1533609385258" class="aw-widget-36hour"  data-locationkey="" data-unit="f" data-language="en-us" data-useip="true" data-uid="awtd1533609385258" data-editlocation="true" data-lifestyle="snow-day")
+            script(type="text/javascript" src="https://oap.accuweather.com/launch.js")
+
+  +googleMaps()
+  //- script.
+  //-   let jobs = #{listings};
+  //-   let listings = #{listings.length}
+  //-   console.log(jobs);
+    

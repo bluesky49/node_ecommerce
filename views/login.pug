@@ -1,0 +1,29 @@
+extends layout
+
+include mixins/_forms
+include mixins/_maps
+
+block content
+  .container.inner
+    .row
+      .col
+        if (currentPath.startsWith('/login'))
+          +login()
+        else if (currentPath.startsWith('/register/shoveler'))
+          //- Show register form
+          +registerShoveler()
+        else if (currentPath.startsWith('/register/shovelee'))
+          //- Show register form
+          +registerShovelee()
+          +autoComplete()
+  if (currentPath.startsWith('/login'))
+    .container-fluid.alternate
+      .container.inner
+        .row
+          .col
+            h2 Reset Password
+            p You can reset your password using the form below
+            if (currentPath.startsWith('/login'))
+              +resetPass("shoveler")
+    
+      

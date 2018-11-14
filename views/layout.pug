@@ -1,0 +1,45 @@
+include mixins/_scripts
+include mixins/_head
+
+<!DOCTYPE html>
+html(lang="en")
+  head
+    title= `${title} | ${h.siteName}`
+    meta(charset="UTF-8")
+    if (process.env.NODE_ENV === "production")
+      meta(http-equiv="Content-Security-Policy" content="upgrade-insecure-requests")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    +headScripts()
+    
+  body
+    block header
+      +navigation()
+
+    block titleArea
+      .container-fluid(style="padding: 0 0 0 0; background-color: lightgray")
+        .container.title-area.text-center
+          h3= title
+
+    block messages
+      if locals.flashes
+        .container(style="padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0;")
+          .flash-messages
+            - const categories = Object.keys(locals.flashes)
+            each category in categories
+              each message in flashes[category]
+                .flash(class=`flash--${category}`)
+                  p.flash__text!= message
+                  button.flash__remove(onClick="this.parentElement.remove()") &times;
+    
+    block content
+
+    +scripts()
+    block footer
+      footer.footer
+        .container.text-center
+          span.text-muted
+            |&copy; #{new Date().getFullYear()}
+            strong
+              |&#160;#{h.siteName}
+            |&#160;| All Rights Reserved.

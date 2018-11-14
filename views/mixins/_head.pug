@@ -1,0 +1,55 @@
+mixin headScripts()
+  link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous")
+  link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous")
+  link(rel="stylesheet" href="/css/stylesheet.css")
+  link(rel="stylesheet" href="/css/bootstrap-formhelpers.min.css")
+  script(src="/javascript/shovelpros.js")
+
+mixin navigation()
+  nav.navbar.navbar-expand-sm.navbar-dark.fixed-top.bg-dark
+    .container
+      a.navbar-brand(href="/")= h.siteName
+      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+        span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.mr-auto
+          each item in h.menu
+            li.nav-item
+              a.nav-link(href=`${item.slug}` class=(currentPath.startsWith(item.slug) ? 'active' : ''))= item.title
+        ul.navbar-nav.navbar-right
+          if user
+            if (user.accountType === "shovelee")
+              li.nav-item
+                a.nav-link(href='/listing/add' class=(currentPath.startsWith('/listing/add') ? 'active' : ''))
+                  span: i.fas.fa-snowflake
+                  |&#160;List Shovel Job
+            if (user.accountType === "shoveler")
+              li.nav-item
+                a.nav-link(href='/listing/available-jobs' class=(currentPath.startsWith('/listing/available-jobs') ? 'active' : ''))
+                  span: i.fas.fa-spinner
+                  |&#160;Available Jobs
+              
+              li.nav-item
+                a.nav-link(href='/listing/in-progress' class=(currentPath.startsWith('/listing/in-progress') ? 'active' : ''))
+                  span: i.fas.fa-spinner
+                  |&#160;Jobs in progress
+
+            li.nav-item
+              a.nav-link(href='/account' class=(currentPath.startsWith('/account') ? 'active' : ''))
+                span: i.fas.fa-user
+                |&#160;Account
+            li.nav-item
+              a.nav-link(href='/logout' class=(currentPath.startsWith('/logout') ? 'active' : '')) 
+                span: i.fas.fa-external-link-alt
+                |&#160;Log out
+          else
+            li.nav-item.dropdown
+              a.nav-link.dropdown-toggle(href="/register/shoveler" role="button" id="registerDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                span: i.fas.fa-user
+                |&#160;Register
+              .dropdown-menu(aria-labelledby="registerDropdown")
+                a.dropdown-item(href="/register/shoveler" class=(currentPath.startsWith('/register/shoveler') ? 'active' : '')) Shoveler
+                a.dropdown-item(href="/register/shovelee" class=(currentPath.startsWith('/register/shovelee') ? 'active' : '')) Shovelee
+            li.nav-item: a.nav-link(href='/login' class=(currentPath.startsWith('/login') ? 'active' : ''))
+              span: i.fas.fa-sign-out-alt
+              |&#160;Login

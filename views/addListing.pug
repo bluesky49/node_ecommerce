@@ -1,0 +1,76 @@
+extends layout
+
+include mixins/_maps
+
+block content
+  .container.inner
+    .row
+      .col-md-2
+      .col
+        form(action='/listing/add' method="POST")
+          .form-row
+            //- Property Type
+            .col-md-6.form-group
+              label(for="property type") Property Type
+              select(class="form-control" name="propertyType" required)
+                option(value="house") Single Unit dwelling (House)
+                option(value="building") Multi-Unit dwelling (Building)
+                option(value="storefront") Commercial (Store-front)
+                option(value="complex") High-Rise Building Complex
+                option(value="vehicle") Vehicle on street
+                option(value="parkinglot") Parking Lot
+            //- Snowfall
+            .col-md-6.form-group
+              label(for="snowfall") Snowfall
+              select(class="form-control snowfall" name="snowfall" required)
+                option()
+                option(value="1-12") 1"-12" inches
+                option(value="13-18") 13"-18" inches
+                option(value="19") 19" or more inches
+          .form-row
+            //- Shovel Job Type
+            .col-md-6.form-group
+              label(for="shovel job") Shovel Job
+              select(class="form-control shovel-job" name="shovelJob" required)
+                option()
+                option(value="sidewalk") Sidewalk
+                option(value="driveway") Driveway
+                option(value="walkway") Walkway
+                option(value="stairs") Stairs
+            //- Job Size
+            .col-md-6.form-group
+              label(for="shovel job size") Size
+              select(class="form-control shovel-job-size" name="jobSize" required)
+                option()
+
+          //- Deadline date
+          .form-group
+            label(for="deadline") What is the best time?
+            br
+            small Remember you do not need to be home or at the shovel location
+            input(type="datetime-local" class="form-control" placeholder="Deadline" min=`${h.moment().add(2, 'hour').format('YYYY-MM-DDThh:mm')}` max=`${h.moment().add(2, 'days').format('YYYY-MM-DDThh:mm')}` name="deadline" required)
+          //- Address
+          .form-group
+            label(for="address") Address
+            input(type="text" id="address" class="form-control" placeholder="Address" name="address" value=`${user.location.address}`)
+            input(type="text" id="lat" class="form-control" placeholder="Latitutde" name="lat" value=`${user.location.coordinates[0]}` hidden required)
+            input(type="text" id="lng" class="form-control" placeholder="Longitude" name="lng" value=`${user.location.coordinates[1]}` hidden required)
+          //- Price
+          .form-row
+            .col-md-5.form-group
+              label(for="price") Price ($)
+              input(type="text" class="form-control listingPrice" name="listingPrice" readonly required)
+          br
+          button.btn.btn-block.btn-primary(type="submit")
+            i.fab.fa-paypal
+            |&#160;Place Order &#38; Publish Shovel Job
+      .col-md-2
+  
+  //- jQuery for price calculation
+  script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
+  //- Address autocomplete via Google's AutoComplete API
+  +autoComplete()
+
+  //- Script to calculate price based on three inputs (snowfall, shoveljob, & job size)
+  script(src="/javascript/calculatePrice.js")
+    

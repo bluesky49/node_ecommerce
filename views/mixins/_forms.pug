@@ -1,0 +1,95 @@
+mixin registerShoveler()
+  form(action="/register/shoveler" method="POST")
+    .form-row
+      .col-md-4.form-group
+        label(for="name") Name
+        input(type="text" class="form-control" placeholder="Name" name="name" required)
+      .col-md-4.form-group
+        label(for="email") Email
+        input(type="email" class="form-control" aria-describedby="email" placeholder="Email" name="email" required)
+      .col-md-4.form-group
+        label(for="phone") Phone Number
+        input(type="tel" class="form-control input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="phone")
+    .form-row
+      .col.form-group
+        label(for="password") Password
+        input(type="password" class="form-control" placeholder="Password" name="password" required)
+      .col.form-group
+        label(for="password-confirm") Confirm Password
+        input(type="password" class="form-control" placeholder="Confirm Password" name="password-confirm" required)
+    - const equipment = ['snow brush/scraper', 'shovel', 'snow blower', 'snow plow', 'bobcat'];
+    .form-group
+      .col-md-2
+        strong: label(for="equipment") Equipment
+    .form-group
+      .col
+        each item in equipment
+          input(type="checkbox" value=`${item.toLowerCase()}` name="equipment")
+          label(for=`${item}`)|&#160;#{h.capitalize(item)}
+          br
+    .form-row.text-center
+      .col.form-group
+        button.btn.btn-block.btn-info(type="submit") Register
+
+mixin registerShovelee()
+  form(action="/register/shovelee" method="POST")
+    .form-row
+      .col-md-4.form-group
+        label(for="name") Name
+        input(type="text" class="form-control" placeholder="Name" name="name" required)
+      .col-md-4.form-group
+        label(for="email") Email
+        input(type="email" class="form-control" aria-describedby="email" placeholder="Email" name="email" required)
+      .col-md-4.form-group
+        label(for="phone") Phone Number
+        input(type="tel" class="form-control input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="phone")
+    .form-row
+      .col.form-group
+        label(for="password") Password
+        input(type="password" class="form-control" placeholder="Password" name="password" required)
+      .col.form-group
+        label(for="password-confirm") Confirm Password
+        input(type="password" class="form-control" placeholder="Confirm Password" name="password-confirm" required)
+    .form-row
+      .col.form-group
+        label(for="address") Address
+        input(type="text" id="address" class="form-control" name="address" placeholder="Address" required)
+        input(type="text" id="lng" class="form-control" name="lng" placeholder="Longitude" required hidden)
+        input(type="text" id="lat" class="form-control" name="lat" placeholder="Latitude" required hidden)
+    .form-row.text-center
+      .col.form-group
+        button.btn.btn-block.btn-info(type="submit") Register
+
+mixin login()
+  form(action="/login" method="POST")
+    .form-row
+      .col-md-4.input-group
+        .input-group-prepend
+          label(class="input-group-text" for="Account Type") Account Type
+        select(class="custom-select accountSelect" name="accountType")
+          option(value="shoveler") Shoveler
+          option(value="shovelee") Shovelee
+    br
+    .form-row
+      .col.form-group
+        label(for="email") Email
+        input(type="email" class="form-control" aria-describedby="email" placeholder="Email" name="email")
+    .form-row
+      .col.form-group
+        input(type="password" class="form-control" placeholder="Password" name="password")
+    button.btn.btn-block.btn-success(type="submit") Login
+
+mixin resetPass(action)
+  form(action=`/account/reset/${action}` method="POST")
+    .form-row
+      .col-md-4.input-group
+        .input-group-prepend
+          label(class="input-group-text" for="Account Type") Account Type
+        select(class="custom-select accountSelect" name="accountType")
+          option(value="shoveler") Shoveler
+          option(value="shovelee") Shovelee
+    br
+    .form-row
+      .col.form-group
+        input(type="email" class="form-control" placeholder="Email" name="email")
+    button.btn.btn-block.btn-danger(type="submit") Reset Password

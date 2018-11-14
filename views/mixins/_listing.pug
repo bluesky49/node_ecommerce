@@ -1,0 +1,193 @@
+mixin jobsInProgress()
+  .row
+    .col
+      if (listings.length >= 1)
+        p You can view all the jobs that you currently have in progress to finish
+        each listing in listings
+          if (listing.status === 'in progress')
+            .accordion
+              //- Listing Title
+              .card
+                //- Card Header - Listing Title
+                .card-header(id=`${listing.title}`)
+                  h5.mb-0
+                    button(class="btn btn-link" type="button" data-toggle="collapse" data-target=`#collapse-${listing._id}` aria-expanded="true" aria-controls=`collapse-${listing._id}`)=listing.title
+
+                //- Card Body (Collapsable) - Listing Description
+                .collapse(id=`collapse-${listing._id}` aria-labelledby=`${listing.title}`)
+                  .card-body
+                    .row
+                      .col-md-4
+                        h5 
+                          i.fas.fa-map-marker-alt
+                          |&#160;Address
+                        p= listing.location.address
+                      .col-md-4
+                        h5 
+                          i.fas.fa-home
+                          |&#160;Property Type
+                        p= h.capitalize(listing.propertyType)
+                      .col-md-4
+                        h5 
+                          i.fas.fa-window-restore
+                          |&#160;Shovel Job
+                        p= h.capitalize(listing.shovelJob)
+                    .row
+                      .col-md-4
+                        h5 
+                          i.fas.fa-vector-square
+                          |&#160;Job Size
+                        p= h.capitalize(listing.size)
+                      .col-md-4
+                        h5 
+                          i.far.fa-snowflake
+                          |&#160;Snowfall
+                        p= `${listing.snowfall}" inches`
+                      .col-md-4
+                        h5 
+                          i.fas.fa-stopwatch
+                          |&#160;Deadline
+                        p= listing.deadLine
+                    
+                    .row
+                      .col
+                        button.btn.btn-block.btn-primary(type="button" data-toggle="modal" data-target="#jobCompletePrompt") Submit Rating and Complete Job
+
+                        .modal(tabindex="-1" role="dialog" id="jobCompletePrompt")
+                          .modal-dialog(role="document")
+                            .modal-content
+                              .modal-header
+                                h5.modal-title Job Completion
+                                button(type="button" class="close" data-dismiss="modal" aria-label="Cancel")
+                                  span(aria-hidden="true") &times;
+                              .modal-body
+                                .alert.alert-danger(role="alert") In order to complete the job successfully, you must be on-site (with GPS enabled) in order for us to verify completness
+                                h6 Shovelee Rating
+                                form(action=`/listing/complete-job/${listing._id}` method="POST")
+                                  input(type="text" id="lat" value="" name="lat" hidden)
+                                  input(type="text" id="lng" value="" name="lng" hidden)
+                                  //- input(type="text" value=`${listing._id}` name="listingId" required hidden)
+                                  .form-group
+                                    label(for="Shovelee Rating") Accuracy
+                                    select.form-control(name="shoveleeRating" required)
+                                      option(value="")
+                                      option(value="1") 1
+                                      option(value="2") 2
+                                      option(value="3") 3
+                                      option(value="4") 4
+                                      option(value="5") 5
+                                      
+                                  button.btn.btn-block.btn-primary(type="submit") Complete Job
+
+                              //- .modal-footer
+                              //-   button(type="button" class="btn btn-secondary" data-dismiss="modal") Close
+                    script.
+                      function getLocation() {
+                        let latInput = document.getElementById('lat');
+                        let lngInput = document.getElementById('lng');
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition(function(position) {
+                            latInput.value = position.coords.latitude;
+                            lngInput.value = position.coords.longitude;
+                          });
+                        }
+                      }
+                      getLocation();
+
+      else 
+        p Looks like there are no jobs in progress at the moment...
+
+mixin availableJobs()
+  include _maps
+  if (!currentPath.startsWith('/listing/available-jobs/share-location'))
+    .row
+      .col-md-2
+      .col-md-8.text-center
+        p In order to show you jobs nearby your area, we need to know your current location
+      .col-md-2
+    .row
+      .col-md-3
+      .col-md-6
+        #gpsStatus.alert.alert-danger(role="alert" style="visibility: hidden") GPS must be enabled in order to show jobs near you.
+        form(action='/listing/available-jobs/share-location' method="POST")
+          input(type="text" id="lat" value="" name="lat" hidden)
+          input(type="text" id="lng" value="" name="lng" hidden)
+          button.btn.btn-block.btn-success.btn-lg.d-none(type="submit" id="share-location")
+            i.fas.fa-map-marked-alt
+            |&#160;Share Location
+      .col-md-3
+      
+    script.
+      function getLocation() {
+        let latInput = document.getElementById('lat');
+        let lngInput = document.getElementById('lng');
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            latInput.value = position.coords.latitude;
+            lngInput.value = position.coords.longitude;
+            document.getElementById('share-location').classList.remove('d-none');
+          });
+        }
+      }
+      getLocation();
+
+  if (listings)
+    .row
+      .col
+        p Available Jobs near you
+        
+        each listing in listings
+          .accordion
+            //- Listing Title
+            .card
+              //- Card Header - Listing Title
+              .card-header(id=`${listing.title}`)
+                h5.mb-0
+                  button(class="btn btn-link" type="button" data-toggle="collapse" data-target=`#collapse-${listing._id}` aria-expanded="true" aria-controls=`collapse-${listing._id}`)=listing.title
+
+              //- Card Body (Collapsable) - Listing Description
+              .collapse(id=`collapse-${listing._id}` aria-labelledby=`${listing.title}`)
+                .card-body
+                  script.
+                    setTimeout(function() {
+                      addMarker(#{listing.location.coordinates[0]}, #{listing.location.coordinates[1]})
+                    }, 300);
+                  .row
+                    .col-md-4
+                      h5 
+                        i.fas.fa-map-marker-alt
+                        |&#160;Address
+                      p= listing.location.formattedAddress
+                    .col-md-4
+                      h5 
+                        i.fas.fa-home
+                        |&#160;Property Type
+                      p= h.capitalize(listing.propertyType)
+                    .col-md-4
+                      h5 
+                        i.fas.fa-window-restore
+                        |&#160;Shovel Job
+                      p= h.capitalize(listing.shovelJob)
+                  .row
+                    .col-md-4
+                      h5 
+                        i.fas.fa-vector-square
+                        |&#160;Job Size
+                      p= h.capitalize(listing.size)
+                    .col-md-4
+                      h5 
+                        i.far.fa-snowflake
+                        |&#160;Snowfall
+                      p= `${listing.snowfall}" inches`
+                    .col-md-4
+                      h5 
+                        i.fas.fa-stopwatch
+                        |&#160;Deadline
+                      p= listing.deadLine
+                  .row
+                    .col
+                      form(action=`/listing/accept-job/${listing._id}` method="POST")
+                        .form-group
+                          input(type="text" value=`${listing._id}` name="listingId" required hidden)
+                        button.btn.btn-block.btn-primary(type="submit") Accept Job
+    +googleMaps()
