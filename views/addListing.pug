@@ -28,21 +28,66 @@ block content
                 option(value="13-18") 13"-18" inches
                 option(value="19") 19" or more inches
           .form-row
-            //- Shovel Job Type
             .col-md-6.form-group
               label(for="shovel job") Shovel Job
-              select(class="form-control shovel-job" name="shovelJob" required)
-                option()
-                option(value="sidewalk") Sidewalk
-                option(value="driveway") Driveway
-                option(value="walkway") Walkway
-                option(value="stairs") Stairs
-            //- Job Size
             .col-md-6.form-group
-              label(for="shovel job size") Size
-              select(class="form-control shovel-job-size" name="jobSize" required)
-                option()
-
+              label(for="job size") Size
+          .form-row
+            //- Shovel Job | sideway
+            .col-md-6.form-group
+              .form-row
+                .col-md-2
+                  input(type="checkbox" value="sidewalk" style="transform: scale(2); cursor: pointer")
+                .col-md-4
+                  label(for="sidewalk") Sidewalk
+            .col-md-6.form-group
+              select(class="form-control shovel-job-size" name="sidewalkSize" disabled)
+                option(value="" hidden) Sidewalk Size
+                option(value="small") Small (5’-15’ ft. length)
+                option(value="medium") Medium (16’-25’ ft. length)
+                option(value="large") Large (26’ or more ft. length)
+          .form-row
+            //- Driveway
+            .col-md-6.form-group
+              .form-row
+                .col-md-2
+                  input(type="checkbox" value="driveway" style="transform: scale(2); cursor: pointer")
+                .col-md-4
+                  label(for="driveway") Driveway
+            .col-md-6.form-group
+              select(class="form-control shovel-job-size" name="drivewaySize" disabled)
+                option(value="" hidden) Driveway Size
+                option(value="small") Small (5’-15’ ft. length)
+                option(value="medium") Medium (16’-25’ ft. length)
+                option(value="large") Large (26’ or more ft. length)
+            .form-row
+            //- Walkway
+            .col-md-6.form-group
+              .form-row
+                .col-md-2
+                  input(type="checkbox" value="walkway" style="transform: scale(2); cursor: pointer")
+                .col-md-4
+                  label(for="walkway") Walkway
+            .col-md-6.form-group
+              select(class="form-control shovel-job-size" name="walkwaySize" disabled)
+                option(value="" hidden) Walkway Size
+                option(value="small") Small (5’-15’ ft. length)
+                option(value="medium") Medium (16’-25’ ft. length)
+                option(value="large") Large (26’ or more ft. length)
+            .form-row
+            //- Stairs
+            .col-md-6.form-group
+              .form-row
+                .col-md-2
+                  input(type="checkbox" value="Stairs" style="transform: scale(2); cursor: pointer")
+                .col-md-4
+                  label(for="stairs") Stairs
+            .col-md-6.form-group
+              select(class="form-control shovel-job-size" name="stairsSize" disabled)
+                option(value="" hidden) Stairs Size
+                option(value="small") Small (5’-15’ ft. length)
+                option(value="medium") Medium (16’-25’ ft. length)
+                option(value="large") Large (26’ or more ft. length)
           //- Deadline date
           .form-group
             label(for="deadline") What is the best time?
@@ -73,4 +118,5 @@ block content
 
   //- Script to calculate price based on three inputs (snowfall, shoveljob, & job size)
   script(src="/javascript/calculatePrice.js")
+  script(src="/javascript/multipleJobs.js")
     
