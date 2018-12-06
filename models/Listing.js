@@ -58,20 +58,82 @@ const listingSchema = new Schema({
       'parkinglot'
     ]
   },
-  shovelJob: {
-    type: String,
-    required: 'You must specify shovel job type',
-    trim: true,
-    lowercase: true,
-    enum: ['sidewalk', 'driveway', 'walkway', 'stairs']
-  },
-  size: {
-    type: String,
-    required: 'You must specify shovel job size',
-    trim: true,
-    lowercase: true,
-    enum: ['small', 'medium', 'large']
-  },
+  shovelJob: [
+    {
+      type: {
+        type: String,
+        trim: true,
+        lowercase: true
+      },
+      size: {
+        type: String,
+        required: 'You must specify shovel job size',
+        trim: true,
+        lowercase: true
+      }
+    },
+    {
+      type: {
+        type: String,
+        trim: true,
+        lowercase: true
+      },
+      size: {
+        type: String,
+        required: 'You must specify shovel job size',
+        trim: true,
+        lowercase: true
+      }
+    },
+    {
+      type: {
+        type: String,
+        trim: true,
+        lowercase: true
+      },
+      size: {
+        type: String,
+        required: 'You must specify shovel job size',
+        trim: true,
+        lowercase: true
+      }
+    },
+    {
+      type: {
+        type: String,
+        trim: true,
+        lowercase: true
+      },
+      size: {
+        type: String,
+        required: 'You must specify shovel job size',
+        trim: true,
+        lowercase: true
+      }
+    }
+  ],
+  //   {
+  //     type: String,
+  //     required: 'You must specify shovel job size',
+  //     trim: true,
+  //     lowercase: true,
+  //     enum: ['small', 'medium', 'large']
+  //   }
+  // ],
+  // shovelJob: {
+  //   type: String,
+  //   required: 'You must specify shovel job type',
+  //   trim: true,
+  //   lowercase: true,
+  //   enum: ['sidewalk', 'driveway', 'walkway', 'stairs']
+  // },
+  // size: {
+  //   type: String,
+  //   required: 'You must specify shovel job size',
+  //   trim: true,
+  //   lowercase: true,
+  //   enum: ['small', 'medium', 'large']
+  // },
   snowfall: {
     type: String,
     required: 'You must specify snowfall amount',

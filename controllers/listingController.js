@@ -66,26 +66,6 @@ exports.validateListing = async (req, res, next) => {
       'parkinglot'
     ])
     .withMessage('Property Type is not supported');
-  req
-    .checkBody(
-      'snowfall',
-      'Snowfall amount must be specified to provide accurate pricing'
-    )
-    .notEmpty();
-  req
-    .check('snowfall')
-    .isIn(['1-12', '13-18', '19'])
-    .withMessage('Snowfall amount is not in range');
-  req.checkBody('shovelJob', 'Shovel Job type must be specified').notEmpty();
-  req
-    .check('shovelJob')
-    .isIn(['sidewalk', 'driveway', 'walkway', 'stairs'])
-    .withMessage('Shovel Job is not supported');
-  req.checkBody('jobSize', 'Job size must be specified').notEmpty();
-  req
-    .check('jobSize')
-    .isIn(['small', 'medium', 'large'])
-    .withMessage('Job Size is not valid');
   req.checkBody('deadline', 'Deadline must be specified').notEmpty();
   req
     .check('deadline')
@@ -113,7 +93,7 @@ exports.validateListing = async (req, res, next) => {
       )
     )
     .withMessage('Address is invalid');
-
+    req.checkBody('listingPrice', 'Shovel Job cannot be empty').notEmpty();
   // Validate all inputs before moving to next function
   const errors = req.validationErrors();
   if (errors) {
@@ -184,12 +164,36 @@ exports.jobsByNeighborhood = async (req, res) => {
 };
 
 exports.createListing = async (req, res, next) => {
+  const snowfall_array = ['1-12', '13-18', '19'];
+  const type = ['sidewalk', 'driveway', 'walkway', 'stairs'];
+  const size = ['small', 'medium', 'large'];
+
+  let sidewalkType = drivewayType = walkwayType = stairsType = '';
+  let sidewalkSize = drivewaySize = walkwaySize = stairsSize = '';
+  let snowfall = snowfall_array[req.body.snowfall];
+  if(req.body.sidewalkSize) {
+    sidewalkType = type[0];
+    sidewalkSize = size[req.body.sidewalkSize];
+  }
+  if(req.body.drivewaySize) {
+    drivewayType = type[1];
+    drivewaySize = size[req.body.drivewaySize];
+  }
+  if(req.body.walkwaySize) {
+    walkwayType = type[2];
+    walkwaySize = size[req.body.walkwaySize];
+  }
+  if(req.body.stairsSize) {
+    stairsType = type[3];
+    stairsSize = size[req.body.stairsSize];
+  }
+
   const listing = new Listing({
     shovelee: req.user._id,
     title: `${res.locals.h.capitalize(
       req.body.propertyType
-    )} | ${res.locals.h.capitalize(req.body.shovelJob)} | ${
-      req.body.snowfall
+    )} | ${
+      snowfall
     }"`,
     location: {
       address: req.body.address,
@@ -204,9 +208,25 @@ exports.createListing = async (req, res, next) => {
       coordinates: [req.body.lat, req.body.lng]
     },
     propertyType: req.body.propertyType,
-    shovelJob: req.body.shovelJob,
-    size: req.body.jobSize,
-    snowfall: req.body.snowfall,
+    shovelJob: [
+      {
+        type: sidewalkType,
+        size: sidewalkSize
+      },
+      {
+        type: drivewayType,
+        size: drivewaySize
+      },
+      {
+        type: walkwayType,
+        size: walkwaySize
+      },
+      {
+        type: stairsType,
+        size: stairsSize
+      }
+    ],
+    snowfall: snowfall,
     deadLine: new Date(req.body.deadline),
     price: parseFloat(req.body.listingPrice)
   });
